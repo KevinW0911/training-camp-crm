@@ -17,6 +17,25 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: '訓練營CRM系統運行中' });
 });
 
+// 新增資料庫初始化API端點
+app.post('/api/init-db', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync({ force: false });
+    res.json({ 
+      status: 'success', 
+      message: '資料庫初始化成功，資料表已創建' 
+    });
+  } catch (error) {
+    console.error('資料庫初始化失敗:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: '資料庫初始化失敗', 
+      error: error.message 
+    });
+  }
+});
+
 // 初始化資料庫
 async function initializeDatabase() {
   try {
