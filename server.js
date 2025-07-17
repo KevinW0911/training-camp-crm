@@ -23,6 +23,7 @@ app.get('/api/init-db', async (req, res) => {
   try {
     console.log('開始初始化資料庫...');
     console.log('DATABASE_URL:', process.env.DATABASE_URL ? '已設定' : '未設定');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
     
     await sequelize.authenticate();
     console.log('資料庫連接成功');
