@@ -6,10 +6,7 @@ const sequelize = new Sequelize(
     dialect: 'postgres',
     logging: console.log,
     dialectOptions: {
-      ssl: process.env.NODE_ENV === 'production' ? {
-        require: true,
-        rejectUnauthorized: false
-      } : false
+      ssl: false  // 禁用SSL，因為Zeabur內部網絡不需要SSL
     }
   }
 );
