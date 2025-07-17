@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訓練營CRM系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .init-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #34495e;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn.danger {
+            background: #e74c3c;
+        }
+
+        .btn.danger:hover {
+            background: #c0392b;
+        }
+
+        .students-list {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .student-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+
+        .student-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .info-value {
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        .status-active {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .status-inactive {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .status-graduated {
+            color: #8e44ad;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .form-section, .students-list {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 訓練營CRM系統</h1>
+        
+        <div class="init-section">
+            <h2>系統初始化</h2>
+            <p>首次使用請先初始化資料庫</p>
+            <button class="btn" onclick="initDatabase()">初始化資料庫</button>
+        </div>
+
+        <div class="form-section">
+            <h2>✏️ 新增學員</h2>
+            <div id="form-message"></div>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="name">姓名*</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email*</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">電話</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="course">課程*</label>
+                    <input type="text" id="course" name="course" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">狀態</label>
+                    <select id="status" name="status">
+                        <option value="active">活躍</option>
+                        <option value="inactive">非活躍</option>
+                        <option value="graduated">已畢業</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">備註</label>
+                    <textarea id="notes" name="notes"></textarea>
+                </div>
+                <button type="submit" class="btn">新增學員</button>
+                <button type="button" class="btn" onclick="resetForm()">重置表單</button>
+            </form>
+        </div>
+
+        <div class="students-list">
+            <h2>👥 學員列表</h2>
+            <button class="btn" onclick="loadStudents()">重新載入</button>
+            <div id="students-container">
+                <div class="loading">載入中...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化資料庫
+        async function initDatabase() {
+            try {
+                const response = await fetch('/api/init-db');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    showMessage('資料庫初始化成功！', 'success');
+                    loadStudents();
+                } else {
+                    showMessage('初始化失敗：' + data.message, 'error');
+                }
+            } catch (error) {
+                showMessage('初始化失敗：' + error.message, 'error');
+            }
+        }
+
+        // 載入學員列表
+        async function loadStudents() {
+            const container = document.getElementById('students-container');
+            container.innerHTML = '<div class="loading">載入中...</div>';
+            
+            try {
+                const response = await fetch('/api/students');
+                const students = await response.json();
+                
+                if (students.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">尚未有學員資料</p>';
+                    return;
+                }
+                
+                let html = '';
+                students.forEach(student => {
+                    html += `
+                        <div class="student-card">
+                            <div class="student-info">
+                                <div class="info-item">
+                                    <span class="info-label">姓名</span>
+                                    <span class="info-value">${student.name}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value">${student.email}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">電話</span>
+                                    <span class="info-value">${student.phone || '未提供'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">課程</span>
+                                    <span class="info-value">${student.course}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">狀態</span>
+                                    <span class="info-value status-${student.status}">
+                                        ${getStatusText(student.status)}
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">報名日期</span>
+                                    <span class="info-value">${formatDate(student.enrollmentDate)}</span>
+                                </div>
+                            </div>
+                            ${student.notes ? `<div><strong>備註：</strong> ${student.notes}</div>` : ''}
+                            <div style="margin-top: 15px;">
+                                <button class="btn danger" onclick="deleteStudent(${student.id})">刪除學員</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = '<p style="text-align: center; color: #e74c3c; padding: 40px;">載入失敗：' + error.message + '</p>';
+            }
+        }
+
+        // 新增學員
+        document.getElementById('studentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const studentData = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                course: formData.get('course'),
+                status: formData.get('status'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const response = await fetch('/api/students', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(studentData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('學員新增成功！', 'success');
+                    resetForm();
+                    loadStudents();
+                } else {
+                    showMessage('新增失敗：' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('新增失敗：' + error.message, 'error');
+            }
+        });
+
+        // 刪除學員
+        async function deleteStudent(id) {
+            if (!confirm('確定要刪除這位學員嗎？')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/students/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('學員刪除成功！', 'success');
+                    loadStudents();
+                } else {
+                    showMessage('刪除失敗：' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('刪除失敗：' + error.message, 'error');
+            }
+        }
+
+        // 重置表單
+        function resetForm() {
+            document.getElementById('studentForm').reset();
+            document.getElementById('form-message').innerHTML = '';
+        }
+
+        // 顯示訊息
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('form-message');
+            messageDiv.innerHTML = `<div class="message ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-TW');
+        }
+
+        // 狀態文字轉換
+        function getStatusText(status) {
+            const statusMap = {
+                'active': '活躍',
+                'inactive': '非活躍',
+                'graduated': '已畢業'
+            };
+            return statusMap[status] || status;
+        }
+
+        // 頁面載入時自動載入學員列表
+        window.onload = function() {
+            loadStudents();
+        };
+    </script>
+</body>
+</html>
