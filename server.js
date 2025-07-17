@@ -47,19 +47,41 @@ app.get('/api/init-db', async (req, res) => {
 
 // 初始化資料庫
 async function initializeDatabase() {
-  try {
-    await sequelize.authenticate();
-    console.log('資料庫連接成功');
-    
-    await sequelize.sync({ force: false });
-    console.log('資料表同步完成');
-  } catch (error) {
-    console.error('資料庫連接失敗:', error);
+  const maxRetries = 10;
+  const retryDelay = 5000; // 5秒
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      console.log(`嘗試連接資料庫 (${i + 1}/${maxRetries})...`);
+      await sequelize.authenticate();
+      console.log('資料庫連接成功');
+      
+      await sequelize.sync({ force: false });
+      console.log('資料表同步完成');
+      
+      return; // 成功後退出
+    } catch (error) {
+      console.error(`資料庫連接失敗 (嘗試 ${i + 1}/${maxRetries}):`, error.message);
+      
+      if (i === maxRetries - 1) {
+        console.error('資料庫初始化最終失敗');
+        process.exit(1);
+      }
+      
+      console.log(`等待 ${retryDelay/1000} 秒後重試...`);
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
+    }
   }
 }
 
-initializeDatabase();
+// 啟動應用程式
+async function startApp() {
+  await initializeDatabase();
+  
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log('訓練營CRM系統已啟動，資料庫已自動初始化');
+  });
+}
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+startApp();
