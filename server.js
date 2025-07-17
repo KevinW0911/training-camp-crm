@@ -21,8 +21,15 @@ app.get('/api/health', (req, res) => {
 // 新增資料庫初始化API端點
 app.get('/api/init-db', async (req, res) => {
   try {
+    console.log('開始初始化資料庫...');
+    console.log('DATABASE_URL:', process.env.DATABASE_URL ? '已設定' : '未設定');
+    
     await sequelize.authenticate();
+    console.log('資料庫連接成功');
+    
     await sequelize.sync({ force: false });
+    console.log('資料表同步完成');
+    
     res.json({ 
       status: 'success', 
       message: '資料庫初始化成功，資料表已創建' 
@@ -32,7 +39,8 @@ app.get('/api/init-db', async (req, res) => {
     res.status(500).json({ 
       status: 'error', 
       message: '資料庫初始化失敗', 
-      error: error.message 
+      error: error.message,
+      details: error.stack
     });
   }
 });
