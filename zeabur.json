@@ -1,0 +1,13 @@
+{
+  "name": "training-camp-crm",
+  "services": [
+    {
+      "name": "postgres",
+      "type": "postgres",
+      "config": {
+        "database": "training_crm",
+        "username": "postgres"
+      }
+    }
+  ]
+}
