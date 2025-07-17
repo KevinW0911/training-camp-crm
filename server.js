@@ -18,7 +18,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // 新增資料庫初始化API端點
-app.post('/api/init-db', async (req, res) => {
+app.get('/api/init-db', async (req, res) => {
   try {
     await sequelize.authenticate();
     await sequelize.sync({ force: false });
