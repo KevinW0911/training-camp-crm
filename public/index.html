@@ -283,7 +283,16 @@
             
             try {
                 const response = await fetch('/api/students');
-                const students = await response.json();
+                const data = await response.json();
+                
+                // 檢查是否有錯誤
+                if (!response.ok) {
+                    container.innerHTML = '<p style="text-align: center; color: #e74c3c; padding: 40px;">載入失敗：' + (data.error || data.message) + '</p>';
+                    return;
+                }
+                
+                // 確保返回的是陣列
+                const students = Array.isArray(data) ? data : [];
                 
                 if (students.length === 0) {
                     container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">尚未有學員資料</p>';
@@ -332,7 +341,8 @@
                 
                 container.innerHTML = html;
             } catch (error) {
-                container.innerHTML = '<p style="text-align: center; color: #e74c3c; padding: 40px;">載入失敗：' + error.message + '</p>';
+                console.error('載入學員列表錯誤:', error);
+                container.innerHTML = '<p style="text-align: center; color: #e74c3c; padding: 40px;">載入失敗：' + error.message + '<br><br>請先點擊上方「初始化資料庫」按鈕</p>';
             }
         }
 
